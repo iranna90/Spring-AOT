@@ -1,5 +1,6 @@
 package example;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,26 +15,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class Controller {
 
-  private final Repository repository;
+  private final UserRepositoryImpl repository;
 
   @Autowired
-  public Controller(final Repository repository) {
+  public Controller(final UserRepositoryImpl repository) {
     this.repository = repository;
   }
 
   @RequestMapping(
       method = RequestMethod.GET,
-      path = "/users/{name}",
+      path = "/users",
       produces = MediaType.APPLICATION_JSON_VALUE
   )
-  public ResponseEntity<User> get(@PathVariable("name") String firstName) {
-    Optional<User> userOptional = repository.findByName(firstName);
-    return userOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+  public ResponseEntity<List<User>> get() {
+    final List users = repository.getUsers();
+    return ResponseEntity.ok(users);
   }
 
   @RequestMapping(
       method = RequestMethod.POST,
-      path = "/users}",
+      path = "/users",
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE
   )
